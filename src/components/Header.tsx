@@ -94,8 +94,14 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
     setSearchQuery('');
   };
 
-  const handleNavClick = (path: string) => {
-    navigate(path);
+  const handleNavClick = (page: string, category?: string) => {
+    if (page === 'home') {
+      navigate('/');
+    } else if (page === 'catalog') {
+      navigate('/services');
+    } else if (category) {
+      navigate(`category/${category}`);
+    }
   };
 
   return (
@@ -112,7 +118,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
           </button>
           
           <div 
-            onClick={() => handleNavClick('/')}
+            onClick={() => navigate('/')}
             className="flex items-center gap-2 cursor-pointer"
           >
             <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
@@ -127,12 +133,42 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
 
         {/* Navigation - Desktop */}
         <nav className="hidden lg:flex items-center gap-8">
-          <button onClick={() => handleNavClick('/')} className="hover:text-primary transition-colors">{t('nav.home')}</button>
-          <button onClick={() => handleNavClick('/category/hunting')} className="hover:text-primary transition-colors">{t('categories.hunting')}</button>
-          <button onClick={() => handleNavClick('/category/fishing')} className="hover:text-primary transition-colors">{t('categories.fishing')}</button>
-          <button onClick={() => handleNavClick('/category/recreation')} className="hover:text-primary transition-colors">{t('categories.recreation')}</button>
-          <button onClick={() => handleNavClick('/category/tours')} className="hover:text-primary transition-colors">{t('categories.tours')}</button>
-          <button onClick={() => handleNavClick('/services')} className="hover:text-primary transition-colors">{t('nav.catalog')}</button>
+          <button 
+            onClick={() => handleNavClick('home')} 
+            className="hover:text-primary transition-colors"
+          >
+            {t('nav.home')}
+          </button>
+          <button 
+            onClick={() => handleNavClick('category', 'hunting')} 
+            className="hover:text-primary transition-colors"
+          >
+            {t('categories.hunting')}
+          </button>
+          <button 
+            onClick={() => handleNavClick('category', 'fishing')} 
+            className="hover:text-primary transition-colors"
+          >
+            {t('categories.fishing')}
+          </button>
+          <button 
+            onClick={() => handleNavClick('category', 'recreation')} 
+            className="hover:text-primary transition-colors"
+          >
+            {t('categories.recreation')}
+          </button>
+          <button 
+            onClick={() => handleNavClick('category', 'tours')} 
+            className="hover:text-primary transition-colors"
+          >
+            {t('categories.tours')}
+          </button>
+          <button 
+            onClick={() => handleNavClick('catalog')} 
+            className="hover:text-primary transition-colors"
+          >
+            {t('nav.catalog')}
+          </button>
         </nav>
 
         {/* Actions */}
@@ -193,7 +229,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={() => navigate('/dashboard')}
+                onClick={onDashboard}
                 className="p-2"
                 title={t('nav.dashboard')}
               >

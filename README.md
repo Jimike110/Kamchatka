@@ -1,7 +1,5 @@
 
-  # Client Area Design Request
-
-  This is a code bundle for Client Area Design Request. The original project is available at https://www.figma.com/design/IQXuYl54xiGg0vRwXyDkGt/Client-Area-Design-Request.
+  # Client Area Design 
 
   ## Running the code
 
