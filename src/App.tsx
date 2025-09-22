@@ -1,4 +1,6 @@
+// ./src/App.tsx
 import { useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import { Footer } from "./components/Footer";
@@ -9,7 +11,7 @@ import { CartProvider } from "./contexts/CartContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
-import { AppProvider, useApp } from "./contexts/AppContext";
+import { AppProvider } from "./contexts/AppContext";
 import { Toaster } from "./components/ui/sonner";
 
 // Page Components
@@ -26,102 +28,54 @@ import { StaticPage } from "./components/pages/StaticPage";
 function AppContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  const { state, navigateTo } = useApp();
+  const location = useLocation();
 
-  const handleMenuToggle = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const handleMenuToggle = () => setIsSidebarOpen(!isSidebarOpen);
+  const handleSidebarClose = () => setIsSidebarOpen(false);
+  const handleCheckout = () => setShowCheckout(true);
 
-  const handleSidebarClose = () => {
-    setIsSidebarOpen(false);
-  };
-
-  const handleCheckout = () => {
-    setShowCheckout(true);
-  };
-
-  const handleCartClick = () => {
-    setShowCheckout(true);
-  };
-
-  const handleDashboard = () => {
-    navigateTo('dashboard');
-  };
-
-  const renderPage = () => {
-    switch (state.currentPage) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'catalog':
-        return <CatalogPage />;
-      case 'category':
-        return <CategoryPage category={state.selectedCategory} />;
-      case 'service':
-        return <ServicePage serviceId={state.selectedServiceId} />;
-      case 'search':
-        return <SearchPage query={state.searchQuery} />;
-      case 'allServices':
-        return <AllServicesPage />;
-      case 'about':
-        return <AboutPage />;
-      case 'contact':
-        return <ContactPage />;
-      case 'ourStory':
-        return <StaticPage pageType="ourStory" />;
-      case 'team':
-        return <StaticPage pageType="team" />;
-      case 'careers':
-        return <StaticPage pageType="careers" />;
-      case 'press':
-        return <StaticPage pageType="press" />;
-      case 'help':
-        return <StaticPage pageType="help" />;
-      case 'faq':
-        return <StaticPage pageType="faq" />;
-      case 'safety':
-        return <StaticPage pageType="safety" />;
-      case 'terms':
-        return <StaticPage pageType="terms" />;
-      case 'privacy':
-        return <StaticPage pageType="privacy" />;
-      case 'cookies':
-        return <StaticPage pageType="cookies" />;
-      default:
-        return <HomePage />;
-    }
-  };
+  const isDashboardPage = location.pathname.startsWith('/dashboard');
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
+    <div className="min-h-screen bg-background text-foreground">
       <Header 
         onMenuToggle={handleMenuToggle}
-        onCartClick={handleCartClick}
         onCheckout={handleCheckout}
-        onDashboard={handleDashboard}
       />
-
-      {/* Sidebar */}
       <Sidebar 
         isOpen={isSidebarOpen}
         onClose={handleSidebarClose}
       />
-
-      {/* Main Content */}
       <main>
-        {renderPage()}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/catalog" element={<CatalogPage />} />
+          <Route path="/services" element={<AllServicesPage />} />
+          <Route path="/category/:categoryName" element={<CategoryPage />} />
+          <Route path="/service/:serviceId" element={<ServicePage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          
+          {/* Static Footer Pages */}
+          <Route path="/our-story" element={<StaticPage pageType="ourStory" />} />
+          <Route path="/team" element={<StaticPage pageType="team" />} />
+          <Route path="/careers" element={<StaticPage pageType="careers" />} />
+          <Route path="/press" element={<StaticPage pageType="press" />} />
+          <Route path="/help" element={<StaticPage pageType="help" />} />
+          <Route path="/faq" element={<StaticPage pageType="faq" />} />
+          <Route path="/safety" element={<StaticPage pageType="safety" />} />
+          <Route path="/terms" element={<StaticPage pageType="terms" />} />
+          <Route path="/privacy" element={<StaticPage pageType="privacy" />} />
+          <Route path="/cookies" element={<StaticPage pageType="cookies" />} />
+        </Routes>
       </main>
-
-      {/* Footer - only show on non-dashboard pages */}
-      {state.currentPage !== 'dashboard' && <Footer />}
-
-      {/* Checkout Modal */}
-      <CheckoutModal
-        isOpen={showCheckout}
-        onClose={() => setShowCheckout(false)}
-      />
-
-      {/* Toast Notifications */}
+      
+      {!isDashboardPage && <Footer />}
+      
+      <CheckoutModal isOpen={showCheckout} onClose={() => setShowCheckout(false)} />
+      
       <Toaster />
     </div>
   );

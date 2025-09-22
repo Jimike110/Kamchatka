@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAuth } from './AuthContext';
-import { toast } from 'sonner@2.0.3';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useAuth } from "./AuthContext";
+import { toast } from "sonner";
 
 interface FavoritesContextType {
   favorites: string[];
@@ -9,7 +15,9 @@ interface FavoritesContextType {
   getFavoriteServices: () => string[];
 }
 
-const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
+const FavoritesContext = createContext<FavoritesContextType | undefined>(
+  undefined
+);
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -36,17 +44,17 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   const toggleFavorite = (serviceId: string) => {
     if (!user) {
-      toast.error('Please log in to save favorites');
+      toast.error("Please log in to save favorites");
       return;
     }
 
-    setFavorites(prev => {
+    setFavorites((prev) => {
       const isFavorite = prev.includes(serviceId);
       if (isFavorite) {
-        toast.success('Removed from favorites');
-        return prev.filter(id => id !== serviceId);
+        toast.success("Removed from favorites");
+        return prev.filter((id) => id !== serviceId);
       } else {
-        toast.success('Added to favorites');
+        toast.success("Added to favorites");
         return [...prev, serviceId];
       }
     });
@@ -61,12 +69,12 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <FavoritesContext.Provider 
-      value={{ 
-        favorites, 
-        toggleFavorite, 
-        isFavorite, 
-        getFavoriteServices 
+    <FavoritesContext.Provider
+      value={{
+        favorites,
+        toggleFavorite,
+        isFavorite,
+        getFavoriteServices,
       }}
     >
       {children}
@@ -77,7 +85,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 export function useFavorites() {
   const context = useContext(FavoritesContext);
   if (context === undefined) {
-    throw new Error('useFavorites must be used within a FavoritesProvider');
+    throw new Error("useFavorites must be used within a FavoritesProvider");
   }
   return context;
 }

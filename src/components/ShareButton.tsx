@@ -1,134 +1,128 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
-import { Share2, Copy, Check, Facebook, Twitter, MessageCircle } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { useState } from "react";
+import { Button, ButtonProps } from "./ui/button";
+import {
+  Share2,
+  Copy,
+  Check,
+  Facebook,
+  Twitter,
+  MessageCircle,
+} from "lucide-react";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from './ui/dropdown-menu';
+} from "./ui/dropdown-menu";
+import { useLanguage } from "../contexts/LanguageContext";
 
-interface ShareButtonProps {
+interface ShareButtonProps extends ButtonProps {
   serviceId: string;
   title: string;
-  variant?: "default" | "ghost" | "outline";
-  size?: "sm" | "default" | "lg";
-  className?: string;
+  variant: string;
+  size: string;
+  className: string;
 }
 
-export function ShareButton({ 
-  serviceId, 
-  title, 
-  variant = "outline", 
+export function ShareButton({
+  serviceId,
+  title,
+  variant = "outline",
   size = "sm",
-  className = "" 
+  className = "",
+  ...props
 }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
+  const { t } = useLanguage();
 
   const getServiceUrl = () => {
+    // Construct a URL that can be handled by the app's router
     return `${window.location.origin}?page=service&serviceId=${serviceId}`;
   };
 
   const handleCopyLink = async () => {
     const url = getServiceUrl();
-    
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      toast.success('Link copied to clipboard!');
-      
+      toast.success(t('share.copied'));
+
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = url;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      
-      setCopied(true);
-      toast.success('Link copied to clipboard!');
-      setTimeout(() => setCopied(false), 2000);
+      console.error("Failed to copy:", error);
+      toast.error(t('share.copyFailed'));
     }
   };
 
   const handleNativeShare = async () => {
+    const url = getServiceUrl();
     if (navigator.share) {
       try {
         await navigator.share({
           title: title,
-          text: `Check out this amazing adventure: ${title}`,
-          url: getServiceUrl()
+          text: t('share.text', { title }),
+          url: url,
         });
       } catch (error) {
-        // User cancelled or error occurred, fall back to copy
-        if (error.name !== 'AbortError') {
-          handleCopyLink();
+        if ((error as Error).name !== "AbortError") {
+          console.error("Share failed:", error);
+          toast.error(t('share.shareFailed'));
         }
       }
     } else {
+      // Fallback for browsers that don't support Web Share API
       handleCopyLink();
     }
   };
 
   const shareUrls = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getServiceUrl())}`,
-    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(getServiceUrl())}&text=${encodeURIComponent(`Check out this amazing adventure: ${title}`)}`,
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(`Check out this amazing adventure: ${title} ${getServiceUrl()}`)}`
+    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(getServiceUrl())}&text=${encodeURIComponent(t('share.text', { title }))}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${t('share.text', { title })} ${getServiceUrl()}`)}`,
   };
 
   const openShareUrl = (url: string) => {
-    window.open(url, '_blank', 'width=600,height=400');
+    window.open(url, "_blank", "noopener,noreferrer,width=600,height=400");
   };
-
-  // Check if device supports native sharing (usually mobile)
-  const supportsNativeShare = typeof navigator !== 'undefined' && navigator.share;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={variant} size={size} className={className}>
+        <Button 
+          variant={variant} 
+          size={size} 
+          className={className} 
+          title={t('common.share')}
+          onClick={(e) => e.stopPropagation()}
+          {...props}
+        >
           <Share2 className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        {/* Native share option for mobile devices */}
-        {supportsNativeShare && (
-          <>
-            <DropdownMenuItem onClick={handleNativeShare}>
-              <Share2 className="mr-2 h-4 w-4" />
-              Share
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </>
-        )}
-        
-        {/* Copy link option */}
+      <DropdownMenuContent align="end" className="w-48" onClick={(e) => e.stopPropagation()}>
+        <DropdownMenuItem onClick={handleNativeShare}>
+          <Share2 className="mr-2 h-4 w-4" />
+          {t('share.native')}
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleCopyLink}>
           {copied ? (
             <Check className="mr-2 h-4 w-4 text-green-500" />
           ) : (
             <Copy className="mr-2 h-4 w-4" />
           )}
-          {copied ? 'Copied!' : 'Copy Link'}
+          {copied ? t('share.copied') : t('share.copyLink')}
         </DropdownMenuItem>
-        
         <DropdownMenuSeparator />
-        
-        {/* Social media sharing options */}
         <DropdownMenuItem onClick={() => openShareUrl(shareUrls.facebook)}>
           <Facebook className="mr-2 h-4 w-4 text-blue-600" />
           Facebook
         </DropdownMenuItem>
-        
         <DropdownMenuItem onClick={() => openShareUrl(shareUrls.twitter)}>
           <Twitter className="mr-2 h-4 w-4 text-blue-400" />
-          Twitter
+          Twitter / X
         </DropdownMenuItem>
-        
         <DropdownMenuItem onClick={() => openShareUrl(shareUrls.whatsapp)}>
           <MessageCircle className="mr-2 h-4 w-4 text-green-500" />
           WhatsApp

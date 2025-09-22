@@ -26,7 +26,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   const quickLinks = [
-    { label: t('footer.aboutUs'), action: () => navigateTo('about') },
+    { label: t('footer.about'), action: () => navigateTo('about') },
     { label: t('footer.ourStory'), action: () => navigateTo('ourStory') },
     { label: t('footer.safety'), action: () => navigateTo('safety') },
     { label: t('footer.terms'), action: () => navigateTo('terms') },
@@ -55,7 +55,10 @@ export function Footer() {
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Brand Column */}
             <div className="lg:col-span-1">
-              <div className="flex items-center gap-2 mb-4">
+              <div 
+                onClick={() => navigateTo('home')}
+                className="flex items-center gap-2 mb-4 cursor-pointer"
+              >
                 <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center">
                   <span className="text-primary-foreground font-bold">K</span>
                 </div>
@@ -190,8 +193,8 @@ export function Footer() {
         {/* Bottom Footer */}
         <div className="py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              © 2024 {t('common.brandName')} {t('common.tagline')}. {t('footer.allRightsReserved')}.
+            <div className="text-sm text-muted-foreground text-center md:text-left">
+              © {new Date().getFullYear()} {t('common.brandName')} {t('common.tagline')}. {t('footer.allRightsReserved')}.
             </div>
             
             <div className="flex flex-wrap gap-6 text-sm">

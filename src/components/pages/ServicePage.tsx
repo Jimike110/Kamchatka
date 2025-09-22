@@ -4,10 +4,19 @@ import { useCurrency } from "../../contexts/CurrencyContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { useFavorites } from "../../contexts/FavoritesContext";
 import { Button } from "../ui/button";
-import { ArrowLeft, Star, MapPin, Calendar, Users, Clock, CheckCircle, Shield, Award } from "lucide-react";
-import { useApp } from "../../contexts/AppContext";
+import {
+  ArrowLeft,
+  Star,
+  MapPin,
+  Users,
+  Clock,
+  CheckCircle,
+  Shield,
+  Award,
+  Heart,
+} from "lucide-react";
 import { Badge } from "../ui/badge";
-import { Card, CardContent } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Separator } from "../ui/separator";
 import { ImageCarousel } from "../ImageCarousel";
@@ -16,32 +25,39 @@ import { TimeSlotSelector } from "../TimeSlotSelector";
 import { ServiceDetailModal } from "../ServiceDetailModal";
 import { AuthModal } from "../AuthModal";
 import { getServiceById } from "../../utils/servicesData";
-import { toast } from "sonner@2.0.3";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface ServicePageProps {
   serviceId?: string;
 }
 
-export function ServicePage({ serviceId }: ServicePageProps) {
+export function ServicePage() {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
-  const { goBack } = useApp();
+  const navigate = useNavigate();
+  const params = useParams();
   const { user } = useAuth();
   const { toggleFavorite, isFavorite } = useFavorites();
-  
-  const [activeTab, setActiveTab] = useState('overview');
+
+  const serviceId = params?.serviceId as ServicePageProps["serviceId"];
+
+  const [activeTab, setActiveTab] = useState("overview");
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
   const [guests, setGuests] = useState(2);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  scrollTo(0, 0);
+
   if (!serviceId) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Service not found</h1>
-          <Button onClick={goBack}>
+          <h1 className="text-2xl font-bold mb-4">
+            {t("error.serviceNotFound")}
+          </h1>
+          <Button onClick={() => navigate(-1)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
@@ -56,11 +72,12 @@ export function ServicePage({ serviceId }: ServicePageProps) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Service not found</h1>
-          <p className="text-muted-foreground mb-4">The service you're looking for doesn't exist.</p>
-          <Button onClick={goBack}>
+          <h1 className="text-2xl font-bold mb-4">
+            {t("error.serviceNotFound")}
+          </h1>
+          <Button onClick={() => navigate(-1)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            {t("common.back")}
           </Button>
         </div>
       </div>
@@ -75,30 +92,22 @@ export function ServicePage({ serviceId }: ServicePageProps) {
     setShowBookingModal(true);
   };
 
-  const handleTimeSlotToggle = (timeSlotId: string) => {
-    setSelectedTimeSlots(prev => {
-      if (prev.includes(timeSlotId)) {
-        return prev.filter(id => id !== timeSlotId);
-      } else {
-        return [...prev, timeSlotId];
-      }
-    });
-  };
-
   return (
     <>
-      <div className="min-h-screen pt-20">
+      <div className="min-h-screen pt-20 bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
-          {/* Header */}
           <div className="mb-8">
-            <Button variant="ghost" onClick={goBack} className="mb-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(-1)}
+              className="mb-4"
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              {t("common.back")}
             </Button>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Main Content - 2 columns */}
             <div className="lg:col-span-2 space-y-8">
               {/* Image Carousel */}
               <ImageCarousel
@@ -117,8 +126,10 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                       {service.category}
                     </Badge>
                     <h1 className="text-3xl font-bold mb-2">{service.title}</h1>
-                    <p className="text-muted-foreground mb-4">by {service.supplier}</p>
-                    
+                    <p className="text-muted-foreground mb-4">
+                      by {service.supplier}
+                    </p>
+
                     <div className="flex items-center gap-6 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <MapPin className="w-4 h-4" />
@@ -134,7 +145,7 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
@@ -142,13 +153,18 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                       onClick={() => toggleFavorite(service.id)}
                       className={isFavorite(service.id) ? "text-red-500" : ""}
                     >
-                      <Heart className={`w-4 h-4 ${isFavorite(service.id) ? 'fill-current' : ''}`} />
+                      <Heart
+                        className={`w-4 h-4 ${
+                          isFavorite(service.id) ? "fill-current" : ""
+                        }`}
+                      />
                     </Button>
                     <ShareButton
                       serviceId={service.id}
                       title={service.title}
                       variant="outline"
                       size="sm"
+                      className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30 backdrop-blur-sm"
                     />
                   </div>
                 </div>
@@ -157,7 +173,14 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                   <div className="flex items-center gap-2">
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-4 h-4 ${i < Math.floor(service.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < Math.floor(service.rating)
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
+                        />
                       ))}
                     </div>
                     <span className="font-medium">{service.rating}</span>
@@ -165,8 +188,8 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                       ({service.reviews} reviews)
                     </span>
                   </div>
-                  <Badge variant={service.available ? 'default' : 'secondary'}>
-                    {service.available ? 'Available' : 'Unavailable'}
+                  <Badge variant={service.available ? "default" : "secondary"}>
+                    {service.available ? "Available" : "Unavailable"}
                   </Badge>
                 </div>
               </div>
@@ -182,7 +205,9 @@ export function ServicePage({ serviceId }: ServicePageProps) {
 
                 <TabsContent value="overview" className="space-y-6">
                   <div>
-                    <h3 className="font-bold text-lg mb-3">About This Adventure</h3>
+                    <h3 className="font-bold text-lg mb-3">
+                      About This Adventure
+                    </h3>
                     <p className="text-muted-foreground leading-relaxed mb-6">
                       {service.description}
                     </p>
@@ -205,21 +230,27 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                       <CardContent className="p-4 text-center">
                         <Clock className="h-6 w-6 mx-auto mb-2 text-primary" />
                         <div className="font-medium">{service.duration}</div>
-                        <div className="text-xs text-muted-foreground">Duration</div>
+                        <div className="text-xs text-muted-foreground">
+                          Duration
+                        </div>
                       </CardContent>
                     </Card>
                     <Card>
                       <CardContent className="p-4 text-center">
                         <Users className="h-6 w-6 mx-auto mb-2 text-primary" />
                         <div className="font-medium">{service.groupSize}</div>
-                        <div className="text-xs text-muted-foreground">Group Size</div>
+                        <div className="text-xs text-muted-foreground">
+                          Group Size
+                        </div>
                       </CardContent>
                     </Card>
                     <Card>
                       <CardContent className="p-4 text-center">
                         <Shield className="h-6 w-6 mx-auto mb-2 text-primary" />
                         <div className="font-medium">Licensed</div>
-                        <div className="text-xs text-muted-foreground">Operator</div>
+                        <div className="text-xs text-muted-foreground">
+                          Operator
+                        </div>
                       </CardContent>
                     </Card>
                   </div>
@@ -236,7 +267,9 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                           </div>
                           <div className="flex-1">
                             <h4 className="font-medium mb-1">{day.title}</h4>
-                            <p className="text-sm text-muted-foreground">{day.description}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {day.description}
+                            </p>
                           </div>
                         </div>
                       </CardContent>
@@ -247,22 +280,32 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                 <TabsContent value="included" className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-medium mb-3 text-green-600">✓ Included</h4>
+                      <h4 className="font-medium mb-3 text-green-600">
+                        ✓ Included
+                      </h4>
                       <ul className="space-y-2">
                         {service.included.map((item, index) => (
-                          <li key={index} className="flex items-start gap-2 text-sm">
+                          <li
+                            key={index}
+                            className="flex items-start gap-2 text-sm"
+                          >
                             <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                             {item}
                           </li>
                         ))}
                       </ul>
                     </div>
-                    
+
                     <div>
-                      <h4 className="font-medium mb-3 text-red-600">✗ Not Included</h4>
+                      <h4 className="font-medium mb-3 text-red-600">
+                        ✗ Not Included
+                      </h4>
                       <ul className="space-y-2">
                         {service.notIncluded.map((item, index) => (
-                          <li key={index} className="flex items-start gap-2 text-sm">
+                          <li
+                            key={index}
+                            className="flex items-start gap-2 text-sm"
+                          >
                             <span className="text-red-500 mt-0.5">✗</span>
                             {item}
                           </li>
@@ -279,62 +322,44 @@ export function ServicePage({ serviceId }: ServicePageProps) {
                     selectedDate={selectedDate}
                     selectedTimeSlots={selectedTimeSlots}
                     onDateSelect={setSelectedDate}
-                    onTimeSlotToggle={handleTimeSlotToggle}
+                    // onTimeSlotToggle={handleTimeSlotToggle}
                   />
                 </TabsContent>
               </Tabs>
             </div>
-
-            {/* Booking Sidebar */}
             <div className="space-y-6">
               <Card className="sticky top-24">
                 <CardContent className="p-6 space-y-4">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold">{formatPrice(service.price)}</span>
-                    <span className="text-sm text-muted-foreground">per person</span>
+                    <span className="text-3xl font-bold">
+                      {formatPrice(service.price)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {t("catalog.perPerson")}
+                    </span>
                     {service.originalPrice && (
                       <span className="text-sm line-through text-muted-foreground">
                         {formatPrice(service.originalPrice)}
                       </span>
                     )}
                   </div>
-
                   <Separator />
-
-                  <div className="space-y-4">
-                    <Button 
-                      onClick={handleBookNow}
-                      disabled={!service.available}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {service.available ? 'Book Now' : 'Currently Unavailable'}
-                    </Button>
-                    
-                    <div className="text-xs text-center text-muted-foreground">
-                      Free cancellation up to 24 hours before
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Award className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Hosted by {service.supplier}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Licensed and insured adventure tour operator with 15+ years of experience.
-                  </p>
+                  <Button
+                    onClick={handleBookNow}
+                    disabled={!service.available}
+                    className="w-full"
+                    size="lg"
+                  >
+                    {service.available
+                      ? t("common.book")
+                      : t("catalog.unavailable")}
+                  </Button>
                 </CardContent>
               </Card>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Service Detail Modal */}
       <ServiceDetailModal
         service={service}
         isOpen={showBookingModal}
@@ -344,8 +369,6 @@ export function ServicePage({ serviceId }: ServicePageProps) {
           setShowAuthModal(true);
         }}
       />
-
-      {/* Auth Modal */}
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}

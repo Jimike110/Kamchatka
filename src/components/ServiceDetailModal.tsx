@@ -1,18 +1,24 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Card, CardContent } from './ui/card';
-import { Calendar } from './ui/calendar';
-import { Separator } from './ui/separator';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { 
-  MapPin, 
-  Clock, 
-  Users, 
-  Star, 
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Card, CardContent } from "./ui/card";
+import { Calendar } from "./ui/calendar";
+import { Separator } from "./ui/separator";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import {
+  MapPin,
+  Clock,
+  Users,
+  Star,
   Calendar as CalendarIcon,
   Minus,
   Plus,
@@ -20,12 +26,14 @@ import {
   Share2,
   Shield,
   Award,
-  CheckCircle
-} from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
-import { toast } from 'sonner@2.0.3';
+  CheckCircle,
+} from "lucide-react";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { useCart } from "../contexts/CartContext";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner";
+import { ImageCarousel } from "./ImageCarousel";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface Service {
   id: string;
@@ -56,12 +64,18 @@ interface ServiceDetailModalProps {
   onAuthRequired: () => void;
 }
 
-export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }: ServiceDetailModalProps) {
+export function ServiceDetailModal({
+  service,
+  isOpen,
+  onClose,
+  onAuthRequired,
+}: ServiceDetailModalProps) {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [guests, setGuests] = useState(2);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   if (!service) return null;
 
@@ -72,13 +86,13 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
     }
 
     if (!selectedDate) {
-      toast.error('Please select a date');
+      toast.error("Please select a date");
       return;
     }
 
     // Calculate end date based on duration
     const endDate = new Date(selectedDate);
-    const durationDays = parseInt(service.duration.split(' ')[0]) || 1;
+    const durationDays = parseInt(service.duration.split(" ")[0]) || 1;
     endDate.setDate(endDate.getDate() + durationDays - 1);
 
     const totalPrice = service.price * guests;
@@ -107,16 +121,18 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const totalPrice = service.price * guests;
-  const savings = service.originalPrice ? (service.originalPrice - service.price) * guests : 0;
+  const savings = service.originalPrice
+    ? (service.originalPrice - service.price) * guests
+    : 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -128,7 +144,8 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
                 {service.title}
               </DialogTitle>
               <DialogDescription className="sr-only">
-                Detailed information about {service.title} adventure service including booking options
+                Detailed information about {service.title} adventure service
+                including booking options
               </DialogDescription>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
@@ -157,10 +174,10 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
           <div className="lg:col-span-2 space-y-6">
             {/* Hero Image */}
             <div className="relative h-64 rounded-lg overflow-hidden">
-              <ImageWithFallback
-                src={service.image}
-                alt={service.title}
-                className="w-full h-full object-cover"
+              <ImageCarousel
+                className="max-w-[10px]"
+                images={service.images}
+                title={service.title}
               />
               <div className="absolute top-4 left-4 flex gap-2">
                 {service.tags.slice(0, 2).map((tag) => (
@@ -182,7 +199,9 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
 
               <TabsContent value="overview" className="space-y-4">
                 <div>
-                  <h3 className="font-bold text-lg mb-2">About This Adventure</h3>
+                  <h3 className="font-bold text-lg mb-2">
+                    About This Adventure
+                  </h3>
                   <p className="text-muted-foreground leading-relaxed">
                     {service.description}
                   </p>
@@ -207,21 +226,27 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
                     <CardContent className="p-4 text-center">
                       <Clock className="h-6 w-6 mx-auto mb-2 text-primary" />
                       <div className="font-medium">{service.duration}</div>
-                      <div className="text-xs text-muted-foreground">Duration</div>
+                      <div className="text-xs text-muted-foreground">
+                        Duration
+                      </div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4 text-center">
                       <Users className="h-6 w-6 mx-auto mb-2 text-primary" />
                       <div className="font-medium">{service.groupSize}</div>
-                      <div className="text-xs text-muted-foreground">Group Size</div>
+                      <div className="text-xs text-muted-foreground">
+                        Group Size
+                      </div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4 text-center">
                       <Shield className="h-6 w-6 mx-auto mb-2 text-primary" />
                       <div className="font-medium">Licensed</div>
-                      <div className="text-xs text-muted-foreground">Operator</div>
+                      <div className="text-xs text-muted-foreground">
+                        Operator
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -238,42 +263,60 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
                         </div>
                         <div className="flex-1">
                           <h4 className="font-medium mb-1">{day.title}</h4>
-                          <p className="text-sm text-muted-foreground">{day.description}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {day.description}
+                          </p>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 )) || (
-                  <p className="text-muted-foreground">Detailed itinerary will be provided upon booking.</p>
+                  <p className="text-muted-foreground">
+                    Detailed itinerary will be provided upon booking.
+                  </p>
                 )}
               </TabsContent>
 
               <TabsContent value="included" className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-medium mb-3 text-green-600">✓ Included</h4>
+                    <h4 className="font-medium mb-3 text-green-600">
+                      ✓ Included
+                    </h4>
                     <ul className="space-y-2">
                       {service.included?.map((item, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
+                        <li
+                          key={index}
+                          className="flex items-start gap-2 text-sm"
+                        >
                           <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                           {item}
                         </li>
                       )) || (
-                        <li className="text-sm text-muted-foreground">Details will be provided upon booking</li>
+                        <li className="text-sm text-muted-foreground">
+                          Details will be provided upon booking
+                        </li>
                       )}
                     </ul>
                   </div>
-                  
+
                   <div>
-                    <h4 className="font-medium mb-3 text-red-600">✗ Not Included</h4>
+                    <h4 className="font-medium mb-3 text-red-600">
+                      ✗ Not Included
+                    </h4>
                     <ul className="space-y-2">
                       {service.notIncluded?.map((item, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
+                        <li
+                          key={index}
+                          className="flex items-start gap-2 text-sm"
+                        >
                           <span className="text-red-500 mt-0.5">✗</span>
                           {item}
                         </li>
                       )) || (
-                        <li className="text-sm text-muted-foreground">Details will be provided upon booking</li>
+                        <li className="text-sm text-muted-foreground">
+                          Details will be provided upon booking
+                        </li>
                       )}
                     </ul>
                   </div>
@@ -288,7 +331,11 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`h-4 w-4 ${i < Math.floor(service.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                          className={`h-4 w-4 ${
+                            i < Math.floor(service.rating)
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
                         />
                       ))}
                     </div>
@@ -298,7 +345,8 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
                   </div>
                 </div>
                 <p className="text-muted-foreground">
-                  Detailed reviews will be displayed here in the full implementation.
+                  Detailed reviews will be displayed here in the full
+                  implementation.
                 </p>
               </TabsContent>
             </Tabs>
@@ -310,7 +358,9 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold">${service.price}</span>
-                  <span className="text-sm text-muted-foreground">per person</span>
+                  <span className="text-sm text-muted-foreground">
+                    per person
+                  </span>
                   {service.originalPrice && (
                     <span className="text-sm line-through text-muted-foreground">
                       ${service.originalPrice}
@@ -357,7 +407,9 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span>${service.price} × {guests} guests</span>
+                    <span>
+                      ${service.price} × {guests} guests
+                    </span>
                     <span>${service.price * guests}</span>
                   </div>
                   {savings > 0 && (
@@ -379,12 +431,11 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
                   className="w-full"
                   size="lg"
                 >
-                  {!service.available 
-                    ? 'Currently Unavailable'
-                    : !selectedDate 
-                    ? 'Select Date First'
-                    : 'Add to Cart'
-                  }
+                  {!service.available
+                    ? "Currently Unavailable"
+                    : !selectedDate
+                    ? "Select Date First"
+                    : "Add to Cart"}
                 </Button>
 
                 <div className="text-xs text-center text-muted-foreground">
@@ -397,10 +448,13 @@ export function ServiceDetailModal({ service, isOpen, onClose, onAuthRequired }:
               <CardContent className="p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <Award className="h-5 w-5 text-primary" />
-                  <span className="font-medium">Hosted by {service.supplier}</span>
+                  <span className="font-medium">
+                    Hosted by {service.supplier}
+                  </span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Licensed and insured adventure tour operator with 15+ years of experience.
+                  Licensed and insured adventure tour operator with 15+ years of
+                  experience.
                 </p>
               </CardContent>
             </Card>

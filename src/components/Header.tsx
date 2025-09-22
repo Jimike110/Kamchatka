@@ -10,6 +10,7 @@ import { CartModal } from "./CartModal";
 import { AuthModal } from "./AuthModal";
 import { LanguageCurrencySelector } from "./LanguageCurrencySelector";
 import { services } from "../utils/servicesData";
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -27,9 +28,10 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
   const { user, signOut } = useAuth();
   const { itemCount } = useCart();
   const { t } = useLanguage();
-  const { navigateTo, isDarkMode, toggleDarkMode } = useApp();
+  const { isDarkMode, toggleDarkMode } = useApp();
   const searchRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout>();
+  const navigate = useNavigate();
 
   // Debounced search functionality
   useEffect(() => {
@@ -78,7 +80,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigateTo('search', { query: searchQuery.trim() });
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchOpen(false);
       setShowResults(false);
       setSearchQuery('');
@@ -86,20 +88,14 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
   };
 
   const handleSearchResultClick = (serviceId: string) => {
-    navigateTo('service', { serviceId });
+    navigate(`/service/${serviceId}`);
     setIsSearchOpen(false);
     setShowResults(false);
     setSearchQuery('');
   };
 
-  const handleNavClick = (page: string, category?: string) => {
-    if (page === 'home') {
-      navigateTo('home');
-    } else if (page === 'catalog') {
-      navigateTo('catalog');
-    } else if (category) {
-      navigateTo('category', { category: category as any });
-    }
+  const handleNavClick = (path: string) => {
+    navigate(path);
   };
 
   return (
@@ -110,65 +106,41 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
           <button
             onClick={onMenuToggle}
             className="lg:hidden p-2 hover:bg-accent rounded-lg"
+            aria-label={t('nav.menu')}
           >
             <Menu className="h-5 w-5" />
           </button>
           
-          <div className="flex items-center gap-2">
+          <div 
+            onClick={() => handleNavClick('/')}
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">K</span>
             </div>
             <div>
-              <h1 className="font-bold text-lg">Kamchatka</h1>
-              <p className="text-xs text-muted-foreground -mt-1">Wild Adventures</p>
+              <h1 className="font-bold text-lg">{t('common.brandName')}</h1>
+              <p className="text-xs text-muted-foreground -mt-1">{t('common.tagline')}</p>
             </div>
           </div>
         </div>
 
         {/* Navigation - Desktop */}
         <nav className="hidden lg:flex items-center gap-8">
-          <button 
-            onClick={() => handleNavClick('home')} 
-            className="hover:text-primary transition-colors"
-          >
-            {t('nav.home')}
-          </button>
-          <button 
-            onClick={() => handleNavClick('category', 'hunting')} 
-            className="hover:text-primary transition-colors"
-          >
-            {t('categories.hunting')}
-          </button>
-          <button 
-            onClick={() => handleNavClick('category', 'fishing')} 
-            className="hover:text-primary transition-colors"
-          >
-            {t('categories.fishing')}
-          </button>
-          <button 
-            onClick={() => handleNavClick('category', 'recreation')} 
-            className="hover:text-primary transition-colors"
-          >
-            {t('categories.recreation')}
-          </button>
-          <button 
-            onClick={() => handleNavClick('category', 'tours')} 
-            className="hover:text-primary transition-colors"
-          >
-            {t('categories.tours')}
-          </button>
-          <button 
-            onClick={() => handleNavClick('catalog')} 
-            className="hover:text-primary transition-colors"
-          >
-            {t('nav.catalog')}
-          </button>
+          <button onClick={() => handleNavClick('/')} className="hover:text-primary transition-colors">{t('nav.home')}</button>
+          <button onClick={() => handleNavClick('/category/hunting')} className="hover:text-primary transition-colors">{t('categories.hunting')}</button>
+          <button onClick={() => handleNavClick('/category/fishing')} className="hover:text-primary transition-colors">{t('categories.fishing')}</button>
+          <button onClick={() => handleNavClick('/category/recreation')} className="hover:text-primary transition-colors">{t('categories.recreation')}</button>
+          <button onClick={() => handleNavClick('/category/tours')} className="hover:text-primary transition-colors">{t('categories.tours')}</button>
+          <button onClick={() => handleNavClick('/services')} className="hover:text-primary transition-colors">{t('nav.catalog')}</button>
         </nav>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          {/* Language & Currency Selector */}
-          <LanguageCurrencySelector />
+          {/* Language & Currency Selector - Hidden on Mobile */}
+          <div className="hidden md:flex">
+            <LanguageCurrencySelector />
+          </div>
           
           {/* Dark Mode Toggle */}
           <Button 
@@ -181,13 +153,14 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
             {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
           
-          {/* Search */}
-          <div className="relative" ref={searchRef}>
+          {/* Search - Hidden on Mobile */}
+          <div className="relative hidden md:block" ref={searchRef}>
             <Button 
               variant="ghost" 
               size="sm"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="p-2"
+              title={t('common.search')}
             >
               <Search className="h-4 w-4" />
             </Button>
@@ -198,7 +171,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
             onCheckout={onCheckout}
             onAuthRequired={() => setShowAuthModal(true)}
           >
-            <Button variant="ghost" size="sm" className="relative p-2">
+            <Button variant="ghost" size="sm" className="relative p-2" title={t('nav.cart')}>
               <ShoppingCart className="h-4 w-4" />
               {itemCount > 0 && (
                 <Badge 
@@ -215,14 +188,14 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
           {user ? (
             <div className="flex items-center gap-2">
               <span className="hidden md:inline text-sm">
-                Hello, {user.user_metadata?.name || user.email?.split('@')[0]}
+                {t('common.hello')}, {user.user_metadata?.name || user.email?.split('@')[0]}
               </span>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={onDashboard}
+                onClick={() => navigate('/dashboard')}
                 className="p-2"
-                title="Dashboard"
+                title={t('nav.dashboard')}
               >
                 <Settings className="h-4 w-4" />
               </Button>
@@ -231,7 +204,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
                 size="sm" 
                 onClick={signOut}
                 className="p-2"
-                title="Sign Out"
+                title={t('auth.logout')}
               >
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -242,6 +215,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
               size="sm" 
               className="p-2"
               onClick={() => setShowAuthModal(true)}
+              title={t('auth.login')}
             >
               <User className="h-4 w-4" />
             </Button>
@@ -249,9 +223,9 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
 
           <Button 
             className="hidden md:flex"
-            onClick={() => !user ? setShowAuthModal(true) : onCartClick?.()}
+            onClick={() => user ? onCartClick?.() : setShowAuthModal(true)}
           >
-            {user ? 'View Cart' : t('common.book')}
+            {user ? t('nav.cart') : t('common.book')}
           </Button>
         </div>
       </div>
@@ -265,7 +239,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
                 <input
                   type="text"
                   placeholder={t('search.placeholder')}
-                  className="w-full px-4 py-2 pr-10 border rounded-lg bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-4 py-2 pr-10 border rounded-lg bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
@@ -280,6 +254,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
                     setShowResults(false);
                   }}
                   className="absolute right-1 top-1/2 -translate-y-1/2 p-1 h-6 w-6"
+                  aria-label={t('common.close')}
                 >
                   <X className="h-3 w-3" />
                 </Button>
@@ -297,7 +272,7 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
                   >
                     <div className="flex items-center gap-3">
                       <img
-                        src={service.image}
+                        src={service.images[0]}
                         alt={service.title}
                         className="w-12 h-12 object-cover rounded"
                       />
@@ -313,14 +288,14 @@ export function Header({ onMenuToggle, onCartClick, onCheckout, onDashboard }: H
                 {searchQuery.length >= 3 && (
                   <button
                     onClick={() => {
-                      navigateTo('search', { query: searchQuery });
+                      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
                       setIsSearchOpen(false);
                       setShowResults(false);
                       setSearchQuery('');
                     }}
                     className="w-full px-4 py-3 text-left hover:bg-accent transition-colors text-primary font-medium"
                   >
-                    {t('search.viewAllResults')} "{searchQuery}"
+                    {t('search.viewAllResultsFor', { query: searchQuery })}
                   </button>
                 )}
               </div>

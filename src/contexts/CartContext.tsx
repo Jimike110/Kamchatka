@@ -1,7 +1,13 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useAuth } from './AuthContext';
-import api from '../utils/api';
-import { toast } from 'sonner@2.0.3';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { useAuth } from "./AuthContext";
+import api from "../utils/api";
+import { toast } from "sonner";
 
 export interface CartItem {
   id: string;
@@ -56,10 +62,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (response.success) {
         setItems(response.data?.items || []);
       } else {
-        console.error('Failed to fetch cart:', response.error);
+        console.error("Failed to fetch cart:", response.error);
       }
     } catch (error) {
-      console.error('Cart fetch error:', error);
+      console.error("Cart fetch error:", error);
     } finally {
       setLoading(false);
     }
@@ -67,7 +73,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = async (item: CartItem) => {
     if (!user) {
-      toast.error('Please sign in to add items to cart');
+      toast.error("Please sign in to add items to cart");
       return;
     }
 
@@ -75,13 +81,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const response = await api.addToCart(user.id, item);
       if (response.success) {
         await refreshCart();
-        toast.success('Added to cart');
+        toast.success("Added to cart");
       } else {
-        toast.error(response.error || 'Failed to add to cart');
+        toast.error(response.error || "Failed to add to cart");
       }
     } catch (error) {
-      console.error('Add to cart error:', error);
-      toast.error('Failed to add to cart');
+      console.error("Add to cart error:", error);
+      toast.error("Failed to add to cart");
     }
   };
 
@@ -92,13 +98,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const response = await api.updateCartItem(user.id, itemId, data);
       if (response.success) {
         await refreshCart();
-        toast.success('Cart updated');
+        toast.success("Cart updated");
       } else {
-        toast.error(response.error || 'Failed to update cart');
+        toast.error(response.error || "Failed to update cart");
       }
     } catch (error) {
-      console.error('Update cart error:', error);
-      toast.error('Failed to update cart');
+      console.error("Update cart error:", error);
+      toast.error("Failed to update cart");
     }
   };
 
@@ -109,13 +115,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const response = await api.removeFromCart(user.id, itemId);
       if (response.success) {
         await refreshCart();
-        toast.success('Removed from cart');
+        toast.success("Removed from cart");
       } else {
-        toast.error(response.error || 'Failed to remove from cart');
+        toast.error(response.error || "Failed to remove from cart");
       }
     } catch (error) {
-      console.error('Remove from cart error:', error);
-      toast.error('Failed to remove from cart');
+      console.error("Remove from cart error:", error);
+      toast.error("Failed to remove from cart");
     }
   };
 
@@ -126,13 +132,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const response = await api.clearCart(user.id);
       if (response.success) {
         setItems([]);
-        toast.success('Cart cleared');
+        toast.success("Cart cleared");
       } else {
-        toast.error(response.error || 'Failed to clear cart');
+        toast.error(response.error || "Failed to clear cart");
       }
     } catch (error) {
-      console.error('Clear cart error:', error);
-      toast.error('Failed to clear cart');
+      console.error("Clear cart error:", error);
+      toast.error("Failed to clear cart");
     }
   };
 
@@ -152,17 +158,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     refreshCart,
   };
 
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error("useCart must be used within a CartProvider");
   }
   return context;
 }

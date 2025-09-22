@@ -6,6 +6,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { useApp } from "../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const services = [
   {
@@ -65,14 +66,14 @@ const services = [
 export function ServicesSection() {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
-  const { navigateTo } = useApp();
+  const navigate = useNavigate();
 
   const handleCategoryClick = (category: "hunting" | "fishing" | "recreation" | "tours") => {
-    navigateTo('category', { category });
+    navigate(`category/${category}`);
   };
 
   const handleViewAllServices = () => {
-    navigateTo('allServices');
+    navigate(`services`)
   };
 
   return (

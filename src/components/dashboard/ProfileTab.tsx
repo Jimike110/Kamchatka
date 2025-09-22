@@ -6,7 +6,7 @@ import { Label } from '../ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { Camera, Save } from 'lucide-react';
 
 export function ProfileTab() {

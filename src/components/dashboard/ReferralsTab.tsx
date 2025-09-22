@@ -6,7 +6,7 @@ import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useCurrency } from '../../contexts/CurrencyContext';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { 
   Users, 
   Share2, 
