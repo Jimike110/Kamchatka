@@ -337,7 +337,7 @@ export function AllServicesPage() {
                   <>
                     {/* Grid View */}
                     <ImageCarousel
-                      images={service.images}
+                      images={service.images[0]}
                       title={service.title}
                       tags={service.featured ? ["Featured"] : []}
                       className="relative"

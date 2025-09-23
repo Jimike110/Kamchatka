@@ -30,7 +30,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { toast } from "sonner";
 import api from "../utils/api";
-import { useApp } from "../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -45,7 +45,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
-  const { navigateTo } = useApp();
+  const navigate = useNavigate();
 
   const [paymentForm, setPaymentForm] = useState({
     cardNumber: "",
@@ -144,7 +144,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   
   const handleGoToBookings = () => {
     handleClose();
-    navigateTo('dashboard');
+    navigate('/dashboard');
     // Ideally, you'd also switch to the bookings tab
   };
 

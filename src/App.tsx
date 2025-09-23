@@ -34,18 +34,15 @@ function AppContent() {
   const handleSidebarClose = () => setIsSidebarOpen(false);
   const handleCheckout = () => setShowCheckout(true);
 
-  const isDashboardPage = location.pathname.startsWith('/dashboard');
+  const isDashboardPage = location.pathname.startsWith("/dashboard");
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header 
+      <Header
         onMenuToggle={handleMenuToggle}
         onCheckout={handleCheckout}
       />
-      <Sidebar 
-        isOpen={isSidebarOpen}
-        onClose={handleSidebarClose}
-      />
+      <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} />
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -57,9 +54,12 @@ function AppContent() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          
+
           {/* Static Footer Pages */}
-          <Route path="/our-story" element={<StaticPage pageType="ourStory" />} />
+          <Route
+            path="/our-story"
+            element={<StaticPage pageType="ourStory" />}
+          />
           <Route path="/team" element={<StaticPage pageType="team" />} />
           <Route path="/careers" element={<StaticPage pageType="careers" />} />
           <Route path="/press" element={<StaticPage pageType="press" />} />
@@ -71,11 +71,14 @@ function AppContent() {
           <Route path="/cookies" element={<StaticPage pageType="cookies" />} />
         </Routes>
       </main>
-      
+
       {!isDashboardPage && <Footer />}
-      
-      <CheckoutModal isOpen={showCheckout} onClose={() => setShowCheckout(false)} />
-      
+
+      <CheckoutModal
+        isOpen={showCheckout}
+        onClose={() => setShowCheckout(false)}
+      />
+
       <Toaster />
     </div>
   );

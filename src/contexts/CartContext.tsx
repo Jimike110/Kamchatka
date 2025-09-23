@@ -14,7 +14,7 @@ export interface CartItem {
   serviceId: string;
   title: string;
   supplier: string;
-  image: string;
+  image: string[];
   price: number;
   duration: string;
   groupSize: string;
@@ -26,6 +26,7 @@ export interface CartItem {
   guests: number;
   totalPrice: number;
   addedAt: string;
+  selectedTimes: string[],
 }
 
 interface CartContextType {

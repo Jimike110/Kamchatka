@@ -5,8 +5,8 @@ import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
 import { ArrowLeft, Search, Filter, X } from "lucide-react";
-import { useApp } from "../../contexts/AppContext";
 import { ServiceCatalog } from "../ServiceCatalog";
+import { useNavigate } from "react-router-dom";
 
 interface SearchPageProps {
   query?: string;
@@ -14,7 +14,7 @@ interface SearchPageProps {
 
 export function SearchPage({ query }: SearchPageProps) {
   const { t } = useLanguage();
-  const { goBack } = useApp();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState(query || '');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -89,7 +89,7 @@ export function SearchPage({ query }: SearchPageProps) {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Button variant="ghost" onClick={goBack} className="mb-4 cursor-pointer">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4 cursor-pointer">
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t('common.back')}
           </Button>

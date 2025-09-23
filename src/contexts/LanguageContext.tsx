@@ -868,6 +868,7 @@ const translations: Translations = {
     "common.address": "Адрес",
     "common.subscribe": "Подписаться",
     "common.processing": "Обработка...",
+    "common.cart": "Корзина",
 
     // Footer
     "footer.company": "Компания",
@@ -1424,6 +1425,7 @@ const translations: Translations = {
     "common.address": "Adresse",
     "common.subscribe": "Abonnieren",
     "common.processing": "Verarbeitung...",
+    "common.cart": "Warenkorb",
 
     // Footer
     "footer.company": "Unternehmen",

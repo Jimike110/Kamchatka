@@ -17,6 +17,8 @@ import {
   Heart,
   Grid3X3,
   Search,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
@@ -25,6 +27,7 @@ import { useFavorites } from "../contexts/FavoritesContext";
 import { LanguageCurrencySelector } from "./LanguageCurrencySelector";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useApp } from "../contexts/AppContext";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -39,6 +42,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const { isDarkMode, toggleDarkMode } = useApp();
 
   if (!isOpen) return null;
 
@@ -249,7 +253,25 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <h3 className="font-medium text-sm text-muted-foreground mb-3 uppercase tracking-wide">
               {t("dashboard.settings")}
             </h3>
-            <LanguageCurrencySelector />
+            <div className="flex">
+              <LanguageCurrencySelector />
+              {/* Dark Mode Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleDarkMode}
+                className="p-2"
+                title={
+                  isDarkMode ? t("common.lightMode") : t("common.darkMode")
+                }
+              >
+                {isDarkMode ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
 
           {/* Footer */}
