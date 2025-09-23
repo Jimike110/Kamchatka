@@ -186,13 +186,13 @@ export function ServiceDetailModal({
                   }`}
                 />
               </Button>
-              <Button variant="outline" size="sm">
-                <ShareButton
-                  serviceId={service.id}
-                  title={service.title}
-                  className="h-4 w-4"
-                />
-              </Button>
+              <ShareButton
+                serviceId={service.id}
+                title={service.title}
+                variant="secondary"
+                size="sm"
+                className="h-8 w-8 p-0 border bg-black/60 hover:bg-black/50"
+              />
             </div>
           </div>
         </DialogHeader>
