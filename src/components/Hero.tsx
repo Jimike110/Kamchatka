@@ -30,9 +30,9 @@ export function Hero() {
           loop
           playsInline
           className="w-full h-full object-cover"
-          poster="https://images.unsplash.com/photo-1704739410998-564ae85cc537?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrYW1jaGF0a2ElMjB2b2xjYW5vJTIwbGFuZHNjYXBlfGVufDF8fHx8MTc1ODQ3MTc4MXww&ixlib=rb-4.1.0&q=80&w=1080"
+          poster="https://mf.b37mrtl.ru/rbthmedia/images/all/2016/10/03/kamchatka%20wild%20beauty/kamchatka_volcano.jpg"
         >
-          <source src={header_video} type="video/mp4" />
+          {/* <source src={header_video} type="video/mp4" /> */}
           {t("common.videoNotSupported")}
         </video>
         <div className="absolute inset-0 bg-black/40" />
@@ -105,15 +105,15 @@ export function Hero() {
               {t("hero.cta")}
             </Button>
 
-            <Button
+            {/* <Button
               size="lg"
-              variant="outline"
+              variant="ghost"
               className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-8"
               onClick={handleVideoTour}
             >
               <Play className="w-4 h-4 mr-2" />
               {t("hero.ctaSecondary")}
-            </Button>
+            </Button> */}
           </div>
 
           {/* Trust Indicators */}

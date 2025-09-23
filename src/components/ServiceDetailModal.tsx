@@ -9,7 +9,6 @@ import {
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
-import { Calendar } from "./ui/calendar";
 import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -18,11 +17,9 @@ import {
   Clock,
   Users,
   Star,
-  Calendar as CalendarIcon,
   Minus,
   Plus,
   Heart,
-  Share2,
   Shield,
   Award,
   CheckCircle,
@@ -38,28 +35,6 @@ import { useFavorites } from "../contexts/FavoritesContext";
 import { ShareButton } from "./ShareButton";
 import type { Service } from "../utils/servicesData";
 
-// interface Service {
-//   id: string;
-//   title: string;
-//   supplier: string;
-//   location: string;
-//   duration: string;
-//   groupSize: string;
-//   price: number;
-//   originalPrice?: number;
-//   rating: number;
-//   reviews: number;
-//   images: string[];
-//   tags: string[];
-//   description: string;
-//   highlights: string[];
-//   included: string[];
-//   notIncluded: string[];
-//   itinerary: { day: number; title: string; description: string }[];
-//   gallery: string[];
-//   available: boolean;
-// }
-
 interface ServiceDetailModalProps {
   service: Service | null;
   isOpen: boolean;
@@ -74,7 +49,7 @@ export function ServiceDetailModal({
   onAuthRequired,
 }: ServiceDetailModalProps) {
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
+  const [selectedTimeSlotId, setSelectedTimeSlotId] = useState<string>("");
   const [guests, setGuests] = useState(2);
   const [activeTab, setActiveTab] = useState("overview");
   const { addToCart } = useCart();
@@ -87,7 +62,7 @@ export function ServiceDetailModal({
   useEffect(() => {
     if (!isOpen) {
       setSelectedDate(undefined);
-      setSelectedTimeSlots([]);
+      setSelectedTimeSlotId("");
       setGuests(1);
     }
   }, [isOpen]);
@@ -96,15 +71,11 @@ export function ServiceDetailModal({
 
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
-    setSelectedTimeSlots([]);
+    setSelectedTimeSlotId("");
   };
 
-  const handleTimeSlotToggle = (timeSlotId: string) => {
-    setSelectedTimeSlots((prev) =>
-      prev.includes(timeSlotId)
-        ? prev.filter((id) => id !== timeSlotId)
-        : [...prev, timeSlotId]
-    );
+  const handleTimeSlotSelect = (timeSlotId: string) => {
+    setSelectedTimeSlotId(timeSlotId);
   };
 
   const handleAddToCart = async () => {
@@ -113,7 +84,7 @@ export function ServiceDetailModal({
       return;
     }
 
-    if (!selectedDate || selectedTimeSlots.length === 0) {
+    if (!selectedDate || selectedTimeSlotId.length === 0) {
       toast.error(t("booking.selectedDateTimeError"));
       return;
     }
@@ -123,9 +94,7 @@ export function ServiceDetailModal({
         (a) => a.date === selectedDate.toISOString().split("T")[0]
       )?.timeSlots || [];
 
-    const selectedTimes = selectedTimeSlots
-      .map((id) => availableSlots.find((slot) => slot.id === id)?.time)
-      .filter((time): time is string => !!time);
+    const selectedTime = selectedTimeSlotId;
 
     // Calculate end date based on duration
     const endDate = new Date(selectedDate);
@@ -151,7 +120,7 @@ export function ServiceDetailModal({
       guests,
       totalPrice,
       addedAt: new Date().toISOString(),
-      selectedTimes,
+      selectedTime,
     };
 
     await addToCart(cartItem);
@@ -447,9 +416,9 @@ export function ServiceDetailModal({
                 <TimeSlotSelector
                   availability={service.availability}
                   selectedDate={selectedDate}
-                  selectedTimeSlots={selectedTimeSlots}
+                  selectedTimeSlotId={selectedTimeSlotId}
                   onDateSelect={handleDateSelect}
-                  onTimeSlotToggle={handleTimeSlotToggle}
+                  onTimeSlotSelect={handleTimeSlotSelect}
                 />
 
                 <div className="space-y-3">
@@ -501,7 +470,7 @@ export function ServiceDetailModal({
                   disabled={
                     !service.available ||
                     !selectedDate ||
-                    selectedTimeSlots.length === 0
+                    selectedTimeSlotId.length === 0
                   }
                   className="w-full"
                   size="lg"
@@ -510,7 +479,7 @@ export function ServiceDetailModal({
                     ? "Currently Unavailable"
                     : !selectedDate
                     ? "Select Date First"
-                    : selectedTimeSlots.length === 0
+                    : selectedTimeSlotId.length === 0
                     ? "Select a time slot first"
                     : t("catalog.addToCart")}
                 </Button>

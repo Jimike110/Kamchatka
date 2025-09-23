@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Card, CardContent } from './ui/card';
-import { Calendar } from './ui/calendar';
-import { Label } from './ui/label';
-import { Separator } from './ui/separator';
-import { Clock, Users, Calendar as CalendarIcon } from 'lucide-react';
-import { TimeSlot, ServiceAvailability } from '../utils/servicesData';
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Card, CardContent } from "./ui/card";
+import { Calendar } from "./ui/calendar";
+import { Label } from "./ui/label";
+import { Separator } from "./ui/separator";
+import { Clock, Users, Calendar as CalendarIcon } from "lucide-react";
+import { TimeSlot, ServiceAvailability } from "../utils/servicesData";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface TimeSlotSelectorProps {
   availability: ServiceAvailability[];
   selectedDate?: Date;
-  selectedTimeSlots: string[];
+  selectedTimeSlotId: string;
   onDateSelect: (date: Date | undefined) => void;
-  onTimeSlotToggle: (timeSlotId: string) => void;
+  onTimeSlotSelect: (timeSlotId: string) => void;
   maxGuests?: number;
   className?: string;
 }
@@ -21,43 +21,56 @@ interface TimeSlotSelectorProps {
 export function TimeSlotSelector({
   availability,
   selectedDate,
-  selectedTimeSlots,
+  selectedTimeSlotId,
   onDateSelect,
-  onTimeSlotToggle,
+  onTimeSlotSelect,
   maxGuests = 6,
-  className = ""
+  className = "",
 }: TimeSlotSelectorProps) {
-  const getAvailabilityForDate = (date: Date): ServiceAvailability | undefined => {
-    const dateString = date.toISOString().split('T')[0];
-    return availability.find(a => a.date === dateString);
+  const { t } = useLanguage();
+
+  const getAvailabilityForDate = (
+    date: Date
+  ): ServiceAvailability | undefined => {
+    const dateString = date.toISOString().split("T")[0];
+    return availability.find((a) => a.date === dateString);
   };
 
   const getTimeSlotsPeriodLabel = (period: string) => {
     switch (period) {
-      case 'morning': return '🌅 Morning';
-      case 'afternoon': return '☀️ Afternoon';
-      case 'evening': return '🌅 Evening';
-      case 'night': return '🌙 Night';
-      default: return period;
+      case "morning":
+        return t("time.morningLabel");
+      case "afternoon":
+        return t("time.afternoonLabel");
+      case "evening":
+        return t("time.eveningLabel");
+      case "night":
+        return t("time.nightLabel");
+      default:
+        return period;
     }
   };
 
   const getTimeSlotCapacityColor = (timeSlot: TimeSlot) => {
     const availableSpots = timeSlot.capacity - timeSlot.booked;
     const utilization = timeSlot.booked / timeSlot.capacity;
-    
-    if (utilization >= 0.9) return 'bg-red-100 text-red-700 border-red-200';
-    if (utilization >= 0.7) return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-    return 'bg-green-100 text-green-700 border-green-200';
+
+    if (utilization >= 0.9) return "bg-red-100 text-red-700 border-red-200";
+    if (utilization >= 0.7)
+      return "bg-yellow-100 text-yellow-700 border-yellow-200";
+    return "bg-green-100 text-green-700 border-green-200";
   };
 
   const isDateAvailable = (date: Date): boolean => {
     const dateAvailability = getAvailabilityForDate(date);
-    return dateAvailability?.timeSlots.some(slot => slot.available) || false;
+    return dateAvailability?.timeSlots.some((slot) => slot.available) || false;
   };
 
-  const currentDateAvailability = selectedDate ? getAvailabilityForDate(selectedDate) : undefined;
-  const availableTimeSlots = currentDateAvailability?.timeSlots.filter(slot => slot.available) || [];
+  const currentDateAvailability = selectedDate
+    ? getAvailabilityForDate(selectedDate)
+    : undefined;
+  const availableTimeSlots =
+    currentDateAvailability?.timeSlots.filter((slot) => slot.available) || [];
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -80,20 +93,22 @@ export function TimeSlotSelector({
                 booked: (date) => {
                   const dateAvailability = getAvailabilityForDate(date);
                   if (!dateAvailability) return false;
-                  return dateAvailability.timeSlots.every(slot => !slot.available);
-                }
+                  return dateAvailability.timeSlots.every(
+                    (slot) => !slot.available
+                  );
+                },
               }}
               modifiersStyles={{
-                available: { 
-                  backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                  color: 'rgb(34, 197, 94)',
-                  fontWeight: 'bold'
+                available: {
+                  backgroundColor: "rgba(34, 197, 94, 0.1)",
+                  color: "rgb(34, 197, 94)",
+                  fontWeight: "bold",
                 },
-                booked: { 
-                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                  color: 'rgb(239, 68, 68)',
-                  textDecoration: 'line-through'
-                }
+                booked: {
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  color: "rgb(239, 68, 68)",
+                  textDecoration: "line-through",
+                },
               }}
               className="rounded-md border w-full"
             />
@@ -121,7 +136,7 @@ export function TimeSlotSelector({
           <Label className="text-base font-medium mb-3 block">
             Available Time Slots for {selectedDate.toLocaleDateString()}
           </Label>
-          
+
           {availableTimeSlots.length === 0 ? (
             <Card>
               <CardContent className="p-6 text-center text-muted-foreground">
@@ -133,16 +148,16 @@ export function TimeSlotSelector({
           ) : (
             <div className="space-y-3">
               {availableTimeSlots.map((timeSlot) => {
-                const isSelected = selectedTimeSlots.includes(timeSlot.id);
+                const isSelected = selectedTimeSlotId === timeSlot.id;
                 const availableSpots = timeSlot.capacity - timeSlot.booked;
-                
+
                 return (
-                  <Card 
+                  <Card
                     key={timeSlot.id}
                     className={`cursor-pointer transition-all hover:shadow-md ${
-                      isSelected ? 'ring-2 ring-primary border-primary' : ''
+                      isSelected ? "ring-2 ring-primary border-primary" : ""
                     }`}
-                    onClick={() => onTimeSlotToggle(timeSlot.id)}
+                    onClick={() => onTimeSlotSelect(timeSlot.id)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -150,7 +165,9 @@ export function TimeSlotSelector({
                           <div className="flex flex-col">
                             <div className="flex items-center gap-2 mb-1">
                               <Clock className="h-4 w-4 text-muted-foreground" />
-                              <span className="font-medium">{timeSlot.time}</span>
+                              <span className="font-medium">
+                                {timeSlot.time}
+                              </span>
                               <Badge variant="outline" className="text-xs">
                                 {getTimeSlotsPeriodLabel(timeSlot.period)}
                               </Badge>
@@ -160,31 +177,28 @@ export function TimeSlotSelector({
                                 <Users className="h-3 w-3" />
                                 <span>{availableSpots} spots available</span>
                               </div>
-                              <Badge 
-                                variant="outline" 
-                                className={`text-xs ${getTimeSlotCapacityColor(timeSlot)}`}
+                              <Badge
+                                variant="outline"
+                                className={`text-xs ${getTimeSlotCapacityColor(
+                                  timeSlot
+                                )}`}
                               >
                                 {timeSlot.booked}/{timeSlot.capacity} booked
                               </Badge>
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
-                          {isSelected && (
-                            <Badge className="bg-primary text-primary-foreground">
-                              Selected
-                            </Badge>
-                          )}
                           <Button
                             variant={isSelected ? "default" : "outline"}
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
-                              onTimeSlotToggle(timeSlot.id);
+                              onTimeSlotSelect(timeSlot.id);
                             }}
                           >
-                            {isSelected ? 'Remove' : 'Select'}
+                            {isSelected ? "Selected" : "Select"}
                           </Button>
                         </div>
                       </div>
@@ -192,23 +206,28 @@ export function TimeSlotSelector({
                   </Card>
                 );
               })}
-              
-              {selectedTimeSlots.length > 0 && (
+
+              {selectedTimeSlotId.length > 0 && (
                 <>
                   <Separator />
                   <div className="p-4 bg-muted/50 rounded-lg">
                     <h4 className="font-medium mb-2">Selected Time Slots:</h4>
                     <div className="flex flex-wrap gap-2">
-                      {selectedTimeSlots.map((timeSlotId) => {
-                        const timeSlot = availableTimeSlots.find(t => t.id === timeSlotId);
+                      {(() => {
+                        const timeSlot = availableTimeSlots.find(
+                          (t) => t.id === selectedTimeSlotId
+                        );
                         if (!timeSlot) return null;
-                        
                         return (
-                          <Badge key={timeSlotId} variant="default" className="flex items-center gap-1">
-                            {timeSlot.time} ({getTimeSlotsPeriodLabel(timeSlot.period)})
+                          <Badge
+                            variant="default"
+                            className="flex items-center gap-1"
+                          >
+                            {timeSlot.time} (
+                            {getTimeSlotsPeriodLabel(timeSlot.period)})
                           </Badge>
                         );
-                      })}
+                      })()}
                     </div>
                   </div>
                 </>
@@ -219,18 +238,22 @@ export function TimeSlotSelector({
       )}
 
       {/* Booking Summary */}
-      {selectedDate && selectedTimeSlots.length > 0 && (
+      {selectedDate && selectedTimeSlotId.length > 0 && (
         <Card className="bg-primary/5 border-primary/20">
           <CardContent className="p-4">
             <h4 className="font-medium mb-2 text-primary">Booking Summary</h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span>Date:</span>
-                <span className="font-medium">{selectedDate.toLocaleDateString()}</span>
+                <span className="font-medium">
+                  {selectedDate.toLocaleDateString()}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Time Slots:</span>
-                <span className="font-medium">{selectedTimeSlots.length} selected</span>
+                <span className="font-medium">
+                  1 selected
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Maximum Guests:</span>

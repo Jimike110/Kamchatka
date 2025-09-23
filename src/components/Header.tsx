@@ -237,29 +237,6 @@ export function Header({
             </Button>
           </div>
 
-          {/* Cart */}
-          {/* <CartModal
-            onCheckout={onCheckout}
-            onAuthRequired={() => setShowAuthModal(true)}
-          >
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative p-2"
-              title={t("nav.cart")}
-            >
-              <ShoppingCart className="h-4 w-4" />
-              {itemCount > 0 && (
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                >
-                  {itemCount > 99 ? "99+" : itemCount}
-                </Badge>
-              )}
-            </Button>
-          </CartModal> */}
-
           {/* User */}
           {user ? (
             <div className="flex items-center gap-2">
@@ -297,39 +274,6 @@ export function Header({
               <User className="h-4 w-4" />
             </Button>
           )}
-
-          {/* <CartModal
-            onCheckout={onCheckout}
-            onAuthRequired={() => setShowAuthModal(true)}
-          >
-            <Button
-              className="relative md:flex hover:opacity-100"
-              onClick={() => {
-                if (!user) {
-                  setShowAuthModal(true);
-                  return;
-                }
-                onCartClick?.();
-              }}
-            >
-              {user ? (
-                <>
-                  <ShoppingCart className="h-4 w-4" />
-                  {itemCount > 0 && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                    >
-                      {itemCount > 99 ? "99+" : itemCount}
-                    </Badge>
-                  )}
-                  <span className="ml-2">{t("nav.cart")}</span>
-                </>
-              ) : (
-                t("common.book")
-              )}
-            </Button>
-          </CartModal> */}
 
           {user ? (
             <CartModal

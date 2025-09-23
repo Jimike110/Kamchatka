@@ -26,7 +26,7 @@ export interface CartItem {
   guests: number;
   totalPrice: number;
   addedAt: string;
-  selectedTimes: string[],
+  selectedTime: string,
 }
 
 interface CartContextType {
