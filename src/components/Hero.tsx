@@ -32,7 +32,7 @@ export function Hero() {
           className="w-full h-full object-cover"
           poster="https://mf.b37mrtl.ru/rbthmedia/images/all/2016/10/03/kamchatka%20wild%20beauty/kamchatka_volcano.jpg"
         >
-          {/* <source src={header_video} type="video/mp4" /> */}
+          <source src={header_video} type="video/mp4" />
           {t("common.videoNotSupported")}
         </video>
         <div className="absolute inset-0 bg-black/40" />
