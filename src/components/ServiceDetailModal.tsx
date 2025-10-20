@@ -58,7 +58,6 @@ export function ServiceDetailModal({
   const { formatPrice } = useCurrency();
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  // reset state when modal closed or service changes
   useEffect(() => {
     if (!isOpen) {
       setSelectedDate(undefined);

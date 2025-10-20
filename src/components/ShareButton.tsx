@@ -38,7 +38,6 @@ export function ShareButton({
   const { t } = useLanguage();
 
   const getServiceUrl = () => {
-    // Construct a URL that can be handled by the app's router
     return `${window.location.origin}/service/${serviceId}`;
   };
 
@@ -72,7 +71,6 @@ export function ShareButton({
         }
       }
     } else {
-      // Fallback for browsers that don't support Web Share API
       handleCopyLink();
     }
   };

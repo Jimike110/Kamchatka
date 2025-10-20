@@ -1,70 +1,75 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Switch } from '../ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Label } from '../ui/label';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useCurrency } from '../../contexts/CurrencyContext';
-import { toast } from 'sonner';
-import { 
-  Settings, 
-  Globe, 
-  DollarSign, 
-  Bell, 
-  Shield, 
-  Moon, 
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Switch } from "../ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Label } from "../ui/label";
+import { useLanguage } from "../../contexts/LanguageContext";
+import { useCurrency } from "../../contexts/CurrencyContext";
+import { toast } from "sonner";
+import {
+  Settings,
+  Globe,
+  DollarSign,
+  Bell,
+  Shield,
+  Moon,
   Sun,
   Languages,
-  Save
-} from 'lucide-react';
+  Save,
+} from "lucide-react";
 
 export function SettingsTab() {
   const { language, setLanguage, t } = useLanguage();
   const { currency, setCurrency } = useCurrency();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const [notifications, setNotifications] = useState({
     email: true,
     push: true,
     sms: false,
     marketing: true,
     bookingUpdates: true,
-    paymentAlerts: true
+    paymentAlerts: true,
   });
 
   const [privacy, setPrivacy] = useState({
     profileVisible: true,
     shareBookingHistory: false,
-    allowDataCollection: true
+    allowDataCollection: true,
   });
 
   const handleSaveSettings = async () => {
     setLoading(true);
     try {
-      // In production, this would save settings to the backend
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Settings saved successfully!');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("Settings saved successfully!");
     } catch (error) {
-      toast.error('Failed to save settings');
-      console.error('Settings save error:', error);
+      toast.error("Failed to save settings");
+      console.error("Settings save error:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const toggleNotification = (key: keyof typeof notifications) => {
-    setNotifications(prev => ({
+    setNotifications((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
   const togglePrivacy = (key: keyof typeof privacy) => {
-    setPrivacy(prev => ({
+    setPrivacy((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
@@ -83,9 +88,14 @@ export function SettingsTab() {
             <div className="space-y-2">
               <Label htmlFor="language" className="flex items-center space-x-2">
                 <Languages className="h-4 w-4" />
-                <span>{t('profile.language')}</span>
+                <span>{t("profile.language")}</span>
               </Label>
-              <Select value={language} onValueChange={(value: 'en' | 'ru' | 'de') => setLanguage(value)}>
+              <Select
+                value={language}
+                onValueChange={(value: "en" | "ru" | "de") =>
+                  setLanguage(value)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -100,16 +110,21 @@ export function SettingsTab() {
             <div className="space-y-2">
               <Label htmlFor="currency" className="flex items-center space-x-2">
                 <DollarSign className="h-4 w-4" />
-                <span>{t('profile.currency')}</span>
+                <span>{t("profile.currency")}</span>
               </Label>
-              <Select value={currency} onValueChange={(value: 'USD' | 'EUR' | 'RUB') => setCurrency(value)}>
+              <Select
+                value={currency}
+                onValueChange={(value: "USD" | "EUR" | "RUB") =>
+                  setCurrency(value)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="USD">{t('currency.usd')} ($)</SelectItem>
-                  <SelectItem value="EUR">{t('currency.eur')} (€)</SelectItem>
-                  <SelectItem value="RUB">{t('currency.rub')} (₽)</SelectItem>
+                  <SelectItem value="USD">{t("currency.usd")} ($)</SelectItem>
+                  <SelectItem value="EUR">{t("currency.eur")} (€)</SelectItem>
+                  <SelectItem value="RUB">{t("currency.rub")} (₽)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -128,7 +143,11 @@ export function SettingsTab() {
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              {isDarkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+              {isDarkMode ? (
+                <Moon className="h-4 w-4" />
+              ) : (
+                <Sun className="h-4 w-4" />
+              )}
               <Label htmlFor="dark-mode">Dark Mode</Label>
             </div>
             <Switch
@@ -153,72 +172,84 @@ export function SettingsTab() {
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="email-notifications">Email Notifications</Label>
-                <p className="text-sm text-gray-600">Receive notifications via email</p>
+                <p className="text-sm text-gray-600">
+                  Receive notifications via email
+                </p>
               </div>
               <Switch
                 id="email-notifications"
                 checked={notifications.email}
-                onCheckedChange={() => toggleNotification('email')}
+                onCheckedChange={() => toggleNotification("email")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="push-notifications">Push Notifications</Label>
-                <p className="text-sm text-gray-600">Receive push notifications in browser</p>
+                <p className="text-sm text-gray-600">
+                  Receive push notifications in browser
+                </p>
               </div>
               <Switch
                 id="push-notifications"
                 checked={notifications.push}
-                onCheckedChange={() => toggleNotification('push')}
+                onCheckedChange={() => toggleNotification("push")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="sms-notifications">SMS Notifications</Label>
-                <p className="text-sm text-gray-600">Receive notifications via SMS</p>
+                <p className="text-sm text-gray-600">
+                  Receive notifications via SMS
+                </p>
               </div>
               <Switch
                 id="sms-notifications"
                 checked={notifications.sms}
-                onCheckedChange={() => toggleNotification('sms')}
+                onCheckedChange={() => toggleNotification("sms")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="booking-updates">Booking Updates</Label>
-                <p className="text-sm text-gray-600">Get notified about booking status changes</p>
+                <p className="text-sm text-gray-600">
+                  Get notified about booking status changes
+                </p>
               </div>
               <Switch
                 id="booking-updates"
                 checked={notifications.bookingUpdates}
-                onCheckedChange={() => toggleNotification('bookingUpdates')}
+                onCheckedChange={() => toggleNotification("bookingUpdates")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="payment-alerts">Payment Alerts</Label>
-                <p className="text-sm text-gray-600">Get notified about payment confirmations</p>
+                <p className="text-sm text-gray-600">
+                  Get notified about payment confirmations
+                </p>
               </div>
               <Switch
                 id="payment-alerts"
                 checked={notifications.paymentAlerts}
-                onCheckedChange={() => toggleNotification('paymentAlerts')}
+                onCheckedChange={() => toggleNotification("paymentAlerts")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="marketing">Marketing Communications</Label>
-                <p className="text-sm text-gray-600">Receive promotional offers and updates</p>
+                <p className="text-sm text-gray-600">
+                  Receive promotional offers and updates
+                </p>
               </div>
               <Switch
                 id="marketing"
                 checked={notifications.marketing}
-                onCheckedChange={() => toggleNotification('marketing')}
+                onCheckedChange={() => toggleNotification("marketing")}
               />
             </div>
           </div>
@@ -238,36 +269,46 @@ export function SettingsTab() {
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="profile-visible">Public Profile</Label>
-                <p className="text-sm text-gray-600">Make your profile visible to other users</p>
+                <p className="text-sm text-gray-600">
+                  Make your profile visible to other users
+                </p>
               </div>
               <Switch
                 id="profile-visible"
                 checked={privacy.profileVisible}
-                onCheckedChange={() => togglePrivacy('profileVisible')}
+                onCheckedChange={() => togglePrivacy("profileVisible")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="share-booking-history">Share Booking History</Label>
-                <p className="text-sm text-gray-600">Allow others to see your booking history</p>
+                <Label htmlFor="share-booking-history">
+                  Share Booking History
+                </Label>
+                <p className="text-sm text-gray-600">
+                  Allow others to see your booking history
+                </p>
               </div>
               <Switch
                 id="share-booking-history"
                 checked={privacy.shareBookingHistory}
-                onCheckedChange={() => togglePrivacy('shareBookingHistory')}
+                onCheckedChange={() => togglePrivacy("shareBookingHistory")}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="data-collection">Analytics & Data Collection</Label>
-                <p className="text-sm text-gray-600">Help improve our service with usage data</p>
+                <Label htmlFor="data-collection">
+                  Analytics & Data Collection
+                </Label>
+                <p className="text-sm text-gray-600">
+                  Help improve our service with usage data
+                </p>
               </div>
               <Switch
                 id="data-collection"
                 checked={privacy.allowDataCollection}
-                onCheckedChange={() => togglePrivacy('allowDataCollection')}
+                onCheckedChange={() => togglePrivacy("allowDataCollection")}
               />
             </div>
           </div>
@@ -307,7 +348,7 @@ export function SettingsTab() {
       <div className="flex justify-end">
         <Button onClick={handleSaveSettings} disabled={loading}>
           <Save className="h-4 w-4 mr-2" />
-          {loading ? t('common.loading') : t('common.save')}
+          {loading ? t("common.loading") : t("common.save")}
         </Button>
       </div>
     </div>

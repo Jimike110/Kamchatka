@@ -7,12 +7,12 @@ import React, {
 } from "react";
 import { useAuth } from "./AuthContext";
 import { toast } from "sonner";
+import { getFavoriteServices, type Service } from "../utils/servicesData";
 
 interface FavoritesContextType {
-  favorites: string[];
   toggleFavorite: (serviceId: string) => void;
   isFavorite: (serviceId: string) => boolean;
-  getFavoriteServices: () => string[];
+  favoriteServices: (serviceIds: string[]) => Service[];
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(
@@ -20,7 +20,7 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(
 );
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
-  const [favorites, setFavorites] = useState<string[]>([]);
+  let [favorites, setFavorites] = useState<string[]>([]);
   const { user } = useAuth();
 
   // Load favorites from localStorage when user changes
@@ -64,17 +64,16 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     return favorites.includes(serviceId);
   };
 
-  const getFavoriteServices = () => {
-    return favorites;
+  const favoriteServices = (): Service[] => {
+    return getFavoriteServices(favorites);
   };
 
   return (
     <FavoritesContext.Provider
       value={{
-        favorites,
+        favoriteServices,
         toggleFavorite,
         isFavorite,
-        getFavoriteServices,
       }}
     >
       {children}

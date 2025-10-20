@@ -6,17 +6,18 @@ import { Heart, MapPin, Clock, Star, Share2 } from 'lucide-react';
 import { useFavorites } from '../../contexts/FavoritesContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useCurrency } from '../../contexts/CurrencyContext';
-import { useApp } from '../../contexts/AppContext';
 import { ShareButton } from '../ShareButton';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
+import { useNavigate } from 'react-router-dom';
+import { ImageCarousel } from '../ImageCarousel';
 
 export function FavoritesTab() {
-  const { favorites, removeFavorite } = useFavorites();
+  const { favoriteServices, toggleFavorite } = useFavorites();
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
-  const { navigateTo } = useApp();
+  const navigate = useNavigate();
 
-  if (favorites.length === 0) {
+  if (favoriteServices.length === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
@@ -25,7 +26,7 @@ export function FavoritesTab() {
           <p className="text-muted-foreground text-center mb-6">
             {t('favorites.empty.description')}
           </p>
-          <Button onClick={() => navigateTo('catalog')}>
+          <Button onClick={() => navigate('/catalog')}>
             {t('favorites.empty.browseCatalog')}
           </Button>
         </CardContent>
@@ -33,25 +34,29 @@ export function FavoritesTab() {
     );
   }
 
+
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-semibold">{t('favorites.title')}</h2>
           <p className="text-muted-foreground">
-            {favorites.length} {favorites.length === 1 ? t('common.service') : t('common.services')} {t('favorites.saved')}
+            {favoriteServices.length} {fa.length === 1 ? t('common.service') : t('common.services')} {t('favorites.saved')}
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {favorites.map((service) => (
+        {favoriteServices.map((service) => (
+          
           <Card key={service.id} className="group hover:shadow-lg transition-shadow">
             <div className="relative">
               <div className="aspect-video overflow-hidden rounded-t-lg">
-                <ImageWithFallback
-                  src={service.images[0]}
-                  alt={service.title}
+                <ImageCarousel
+                  images={service.images}
+                  title={service.title}
+                  tags={service.tags}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                 />
               </div>
@@ -60,12 +65,13 @@ export function FavoritesTab() {
                   variant="secondary"
                   size="sm"
                   className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
-                  onClick={() => removeFavorite(service.id)}
+                  onClick={() => toggleFavorite(service.id)}
                 >
                   <Heart className="h-4 w-4 fill-red-500 text-red-500" />
                 </Button>
                 <ShareButton
-                  service={service}
+                  title={service.title}
+                  serviceId={service.id}
                   className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
                 />
               </div>

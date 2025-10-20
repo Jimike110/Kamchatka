@@ -27,7 +27,6 @@ export function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      // Mock form submission - in production, send to your API
       await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success(t("contact.success"));
       setFormData({

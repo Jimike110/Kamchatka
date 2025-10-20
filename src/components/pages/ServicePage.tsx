@@ -48,8 +48,6 @@ export function ServicePage() {
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  scrollTo(0, 0);
-
   if (!serviceId) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
@@ -322,7 +320,6 @@ export function ServicePage() {
                     selectedDate={selectedDate}
                     selectedTimeSlots={selectedTimeSlots}
                     onDateSelect={setSelectedDate}
-                    // onTimeSlotToggle={handleTimeSlotToggle}
                   />
                 </TabsContent>
               </Tabs>

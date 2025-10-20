@@ -1,7 +1,10 @@
-// ./src/contexts/AppContext.tsx
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-
-// The page type state is no longer needed here. Routing handles it.
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
 interface AppState {
   isLoading: boolean;
@@ -23,38 +26,38 @@ const defaultState: AppState = {
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(defaultState);
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('darkMode');
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("darkMode");
       if (saved) return JSON.parse(saved);
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
     return false;
   });
 
   useEffect(() => {
     if (isDarkMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
   const setLoading = (loading: boolean) => {
-    setState(prev => ({ ...prev, isLoading: loading }));
+    setState((prev) => ({ ...prev, isLoading: loading }));
   };
 
   const toggleDarkMode = () => {
-    setIsDarkMode(prev => !prev);
+    setIsDarkMode((prev) => !prev);
   };
 
   return (
-    <AppContext.Provider 
-      value={{ 
-        state, 
+    <AppContext.Provider
+      value={{
+        state,
         setLoading,
         isDarkMode,
-        toggleDarkMode 
+        toggleDarkMode,
       }}
     >
       {children}
@@ -65,7 +68,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 export function useApp() {
   const context = useContext(AppContext);
   if (context === undefined) {
-    throw new Error('useApp must be used within an AppProvider');
+    throw new Error("useApp must be used within an AppProvider");
   }
   return context;
 }

@@ -59,7 +59,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     country: "",
   });
 
-  // Prefill form with user data when modal opens or user changes
   useEffect(() => {
     if (user && isOpen) {
       setPaymentForm((prev) => ({
@@ -99,7 +98,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     setProcessing(true);
 
     try {
-      // Create booking
       const bookingData = {
         items: items.map((item) => ({
           serviceId: item.serviceId,
@@ -122,7 +120,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             country: paymentForm.country,
           },
         },
-        status: "pending", // Initial status
+        status: "pending",
       };
 
       const response = await api.createBooking(user.id, bookingData);
@@ -141,11 +139,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       setProcessing(false);
     }
   };
-  
+
   const handleGoToBookings = () => {
     handleClose();
-    navigate('/dashboard');
-    // Ideally, you'd also switch to the bookings tab
+    navigate("/dashboard");
   };
 
   const handleClose = () => {
@@ -175,9 +172,13 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             </p>
             <div className="space-y-3">
               <Button onClick={handleGoToBookings} className="w-full">
-                {t('dashboard.bookings')}
+                {t("dashboard.bookings")}
               </Button>
-              <Button onClick={handleClose} variant="outline" className="w-full">
+              <Button
+                onClick={handleClose}
+                variant="outline"
+                className="w-full"
+              >
                 {t("common.continueExploring")}
               </Button>
             </div>
@@ -422,7 +423,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                           })
                         }
                         required
-                        disabled // Email should not be editable if user is logged in
+                        disabled
                       />
                     </div>
                     <div>
@@ -485,9 +486,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     <CreditCard className="h-4 w-4 mr-2" />
                     {processing
                       ? t("common.processing")
-                      : `${t("checkout.payNow")} - ${formatPrice(
-                          totalAmount
-                        )}`}
+                      : `${t("checkout.payNow")} - ${formatPrice(totalAmount)}`}
                   </Button>
                 </form>
               </CardContent>

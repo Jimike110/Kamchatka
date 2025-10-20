@@ -1,4 +1,3 @@
-// ./src/App.tsx
 import { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Header } from "./components/Header";
@@ -14,7 +13,6 @@ import { FavoritesProvider } from "./contexts/FavoritesContext";
 import { AppProvider } from "./contexts/AppContext";
 import { Toaster } from "./components/ui/sonner";
 
-// Page Components
 import { HomePage } from "./components/pages/HomePage";
 import { CatalogPage } from "./components/pages/CatalogPage";
 import { CategoryPage } from "./components/pages/CategoryPage";
@@ -38,10 +36,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header
-        onMenuToggle={handleMenuToggle}
-        onCheckout={handleCheckout}
-      />
+      <Header onMenuToggle={handleMenuToggle} onCheckout={handleCheckout} />
       <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} />
       <main>
         <Routes>

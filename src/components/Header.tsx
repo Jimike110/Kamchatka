@@ -50,7 +50,6 @@ export function Header({
   const debounceRef = useRef<NodeJS.Timeout>(null);
   const navigate = useNavigate();
 
-  // Debounced search functionality
   useEffect(() => {
     if (searchQuery.length >= 3) {
       if (debounceRef.current) {
@@ -87,7 +86,6 @@ export function Header({
     };
   }, [searchQuery]);
 
-  // Close search results when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (

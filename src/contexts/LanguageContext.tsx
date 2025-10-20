@@ -319,6 +319,7 @@ const translations: Translations = {
     "common.address": "Address",
     "common.subscribe": "Subscribe",
     "common.processing": "Processing...",
+    "common.cart": "Cart",
 
     // Footer
     "footer.company": "Company",

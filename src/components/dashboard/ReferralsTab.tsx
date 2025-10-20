@@ -19,7 +19,7 @@ import {
   Clock
 } from 'lucide-react';
 
-// Mock referral data
+
 const mockReferrals = [
   {
     id: '1',
@@ -56,7 +56,7 @@ const mockReferrals = [
 export function ReferralsTab() {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
-  const [referralCode] = useState('KAMCHATKA-USER123'); // In production, this would be user-specific
+  const [referralCode] = useState('KAMCHATKA-USER123'); production, this would be user-specific
   const [inviteEmail, setInviteEmail] = useState('');
 
   const totalEarnings = mockReferrals.reduce((sum, referral) => sum + referral.earnedAmount, 0);
@@ -80,7 +80,7 @@ export function ReferralsTab() {
       return;
     }
     
-    // In production, this would send an actual email
+    production, this would send an actual email
     toast.success(`Invitation sent to ${inviteEmail}!`);
     setInviteEmail('');
   };

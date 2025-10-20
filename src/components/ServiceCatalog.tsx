@@ -3,14 +3,20 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { 
-  Search, 
-  Star, 
-  MapPin, 
-  Clock, 
-  Users, 
+import {
+  Search,
+  Star,
+  MapPin,
+  Clock,
+  Users,
   Calendar,
   Heart,
   Target,
@@ -29,23 +35,27 @@ import { useCurrency } from "../contexts/CurrencyContext";
 import { services, categories } from "../utils/servicesData";
 import { useNavigate } from "react-router-dom";
 
-// Import icons for categories
 const iconMap: { [key: string]: React.ElementType } = {
   Mountain,
   Target,
   Fish,
-  TreePine
+  TreePine,
 };
 
 interface ServiceCatalogProps {
-  filterByCategory?: 'hunting' | 'fishing' | 'recreation' | 'tours';
+  filterByCategory?: "hunting" | "fishing" | "recreation" | "tours";
   showFullCatalog?: boolean;
 }
 
-export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: ServiceCatalogProps) {
+export function ServiceCatalog({
+  filterByCategory,
+  showFullCatalog = false,
+}: ServiceCatalogProps) {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
-  const [activeCategory, setActiveCategory] = useState(filterByCategory || "all");
+  const [activeCategory, setActiveCategory] = useState(
+    filterByCategory || "all"
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("rating");
   const [selectedService, setSelectedService] = useState<any>(null);
@@ -55,11 +65,13 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
   const { toggleFavorite, isFavorite } = useFavorites();
   const navigate = useNavigate();
 
-  const filteredServices = services.filter(service => {
-    const matchesCategory = activeCategory === "all" || service.category === activeCategory;
-    const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         service.supplier.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         service.location.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredServices = services.filter((service) => {
+    const matchesCategory =
+      activeCategory === "all" || service.category === activeCategory;
+    const matchesSearch =
+      service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      service.supplier.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      service.location.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -77,8 +89,10 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
         return 0;
     }
   });
-  
-  const servicesToShow = showFullCatalog ? sortedServices : sortedServices.slice(0, 6);
+
+  const servicesToShow = showFullCatalog
+    ? sortedServices
+    : sortedServices.slice(0, 6);
 
   const handleServiceClick = (service: any) => {
     navigate(`/service/${service.id}`);
@@ -105,12 +119,12 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
         {/* Header */}
         {!showFullCatalog && (
           <div className="text-center mb-12">
-            <Badge className="mb-4">{t('services.exploreAdventures')}</Badge>
+            <Badge className="mb-4">{t("services.exploreAdventures")}</Badge>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              {t('catalog.title')}
+              {t("catalog.title")}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('services.subtitle')}
+              {t("services.subtitle")}
             </p>
           </div>
         )}
@@ -121,7 +135,7 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
             <div className="relative flex-1 w-full lg:max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder={t('search.placeholderShort')}
+                placeholder={t("search.placeholderShort")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -131,13 +145,21 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
             <div className="flex items-center gap-3">
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder={t('catalog.sortBy')} />
+                  <SelectValue placeholder={t("catalog.sortBy")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="rating">{t('catalog.highestRated')}</SelectItem>
-                  <SelectItem value="reviews">{t('catalog.mostReviewed')}</SelectItem>
-                  <SelectItem value="price-low">{t('catalog.priceLowHigh')}</SelectItem>
-                  <SelectItem value="price-high">{t('catalog.priceHighLow')}</SelectItem>
+                  <SelectItem value="rating">
+                    {t("catalog.highestRated")}
+                  </SelectItem>
+                  <SelectItem value="reviews">
+                    {t("catalog.mostReviewed")}
+                  </SelectItem>
+                  <SelectItem value="price-low">
+                    {t("catalog.priceLowHigh")}
+                  </SelectItem>
+                  <SelectItem value="price-high">
+                    {t("catalog.priceHighLow")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -145,7 +167,11 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
 
           {/* Categories Tabs */}
           {!filterByCategory && (
-            <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+            <Tabs
+              value={activeCategory}
+              onValueChange={setActiveCategory}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-none lg:flex lg:h-auto lg:p-1">
                 {categories.map((category) => {
                   const Icon = iconMap[category.icon] || Mountain;
@@ -156,8 +182,13 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
                       className="flex items-center gap-2 lg:px-4 lg:py-2"
                     >
                       <Icon className="h-4 w-4" />
-                      <span className="hidden sm:inline">{t(`categories.${category.id}`)}</span>
-                      <Badge variant="secondary" className="hidden lg:inline-flex text-xs">
+                      <span className="hidden sm:inline">
+                        {t(`categories.${category.id}`)}
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="hidden lg:inline-flex text-xs"
+                      >
                         {category.count}
                       </Badge>
                     </TabsTrigger>
@@ -167,12 +198,12 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
             </Tabs>
           )}
         </div>
-        
+
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
           {servicesToShow.map((service) => (
-            <Card 
-              key={service.id} 
+            <Card
+              key={service.id}
               className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col"
               onClick={() => handleServiceClick(service)}
             >
@@ -180,26 +211,34 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
                 <ImageCarousel
                   images={service.images}
                   title={service.title}
-                  tags={service.featured ? [t('common.featured')] : []}
+                  tags={service.featured ? [t("common.featured")] : []}
                 />
                 <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
                   <Button
                     size="sm"
                     variant="secondary"
                     className={`h-8 w-8 p-0 backdrop-blur-sm transition-colors bg-black/30 hover:bg-black/50 ${
-                      isFavorite(service.id) 
-                        ? 'text-red-500 hover:text-red-400' 
-                        : 'text-white'
+                      isFavorite(service.id)
+                        ? "text-red-500 hover:text-red-400"
+                        : "text-white"
                     }`}
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleFavorite(service.id);
                     }}
-                    title={isFavorite(service.id) ? t('favorites.remove') : t('favorites.add')}
+                    title={
+                      isFavorite(service.id)
+                        ? t("favorites.remove")
+                        : t("favorites.add")
+                    }
                   >
-                    <Heart className={`h-4 w-4 ${isFavorite(service.id) ? 'fill-current' : ''}`} />
+                    <Heart
+                      className={`h-4 w-4 ${
+                        isFavorite(service.id) ? "fill-current" : ""
+                      }`}
+                    />
                   </Button>
-                  
+
                   <ShareButton
                     serviceId={service.id}
                     title={service.title}
@@ -216,7 +255,7 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
                     {service.title}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {t('common.by')} {service.supplier}
+                    {t("common.by")} {service.supplier}
                   </p>
                 </div>
 
@@ -235,7 +274,9 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
                   </div>
                   <div className="flex items-center gap-1">
                     <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                    <span>{service.rating} ({service.reviews})</span>
+                    <span>
+                      {service.rating} ({service.reviews})
+                    </span>
                   </div>
                 </div>
 
@@ -248,16 +289,18 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
                 </div>
 
                 <div className="flex justify-between items-center mt-auto pt-2">
-                   <div className="text-lg font-bold">
-                      {formatPrice(service.price)}
-                    </div>
-                  <Button 
+                  <div className="text-lg font-bold">
+                    {formatPrice(service.price)}
+                  </div>
+                  <Button
                     size="sm"
                     disabled={!service.available}
                     onClick={(e) => handleBookNow(service, e)}
                   >
                     <Calendar className="h-4 w-4 mr-2" />
-                    {service.available ? t('common.book') : t('catalog.unavailable')}
+                    {service.available
+                      ? t("common.book")
+                      : t("catalog.unavailable")}
                   </Button>
                 </div>
               </CardContent>
@@ -268,13 +311,16 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
         {servicesToShow.length === 0 && (
           <div className="text-center py-12">
             <div className="text-muted-foreground mb-4">
-              {t('catalog.noResults')}
+              {t("catalog.noResults")}
             </div>
-            <Button variant="outline" onClick={() => {
-              setSearchQuery("");
-              setActiveCategory("all");
-            }}>
-              {t('catalog.clearFilters')}
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchQuery("");
+                setActiveCategory("all");
+              }}
+            >
+              {t("catalog.clearFilters")}
             </Button>
           </div>
         )}
@@ -282,7 +328,7 @@ export function ServiceCatalog({ filterByCategory, showFullCatalog = false }: Se
         {!showFullCatalog && sortedServices.length > 6 && (
           <div className="text-center mt-8">
             <Button variant="outline" size="lg" onClick={handleLoadMore}>
-              {t('services.viewAll')}
+              {t("services.viewAll")}
             </Button>
           </div>
         )}
